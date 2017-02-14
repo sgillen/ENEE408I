@@ -3,7 +3,9 @@
 
 
 DualMC33926MotorShield md;
-
+int lPin = 2;
+int rPin = 3;
+int fPin = 5;
 
 char buffer[BUFFER_SIZE];
 uint16_t bufferPosition;
@@ -33,19 +35,37 @@ void loop() {
                 }
                 
          else if(prot[0] == 'p'){
-              char* leftMString = strtok(buffer, ",");
+              char* command = strtok(buffer, ",");
+              char* leftMString = strtok(NULL, ",");
               char* rightMString = strtok(NULL, "!");
 
-               
-              md.setM1Speed(100);
-              md.setM2Speed(100);
-              delay(50);
+              Serial.println(buffer);
+              delay(1000);
+              Serial.println(rightMString);
+              delay(1000);
 
-              Serial.println("P");
+              int leftM = atoi(leftMString);
+              int rightM = atoi(rightMString);
+                
+              //md.setM1Speed(100);
+              //md.setM2Speed(100);
+              delay(1000);
+
+              //Serial.println("P");
          }
          else if(prot[0] == 's'){
-              //TODO send pings
-              Serial.println("S");
+              int fDist = ping(fPin);
+              int lDist = ping(lPin);
+              int rDist = ping(rPin);
+
+               fDist = microsecondsToCentimeters(fDist);
+               lDist = microsecondsToCentimeters(lDist);
+               rDist = microsecondsToCentimeters(rDist);
+
+              String comma = ","; //I'm not happy about this
+              String S_comma = "S,";
+              
+              Serial.println(S_comma + fDist + comma + lDist + comma + rDist );
           
          }
          else{Serial.println("B");}
@@ -60,6 +80,20 @@ void loop() {
 }
 
 
+long ping(int in){
+  pinMode(in, OUTPUT);
+  digitalWrite(in, LOW);
+  delayMicroseconds(2);
+  digitalWrite(in, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(in, LOW);
+
+  pinMode(in, INPUT);
+  long duration = pulseIn(in, HIGH, 4000);
+  return duration;
+}
+
+
 void stopIfFault()
 {
   if (md.getFault())
@@ -69,31 +103,10 @@ void stopIfFault()
   }
 }
 
-void forward(){
-  md.setM1Speed(100);
-  md.setM2Speed(100);
-  delay(50);
-}
 
-void backward(){
-  md.setM1Speed(-100);
-  md.setM2Speed(-100);
-  delay(50);
-}
-
-void right(){
-  md.setM1Speed(100);
-  md.setM2Speed(-100);
-  delay(50);
-}
-
-void left(){
-  md.setM1Speed(-100);
-  md.setM2Speed(100);
-  delay(50);
-}
-
-void stop(){
-  md.setM1Speed(0);
-  md.setM2Speed(0);
+long microsecondsToCentimeters(long microseconds) {
+  // The speed of sound is 340 m/s or 29 microseconds per centimeter.
+  // The ping travels out and back, so to find the distance of the
+  // object we take half of the distance travelled.
+  return microseconds / 29 / 2;
 }
