@@ -29,29 +29,31 @@ void loop() {
 
     // Check if we've reached exclamation
     if (buffer[bufferPosition] == '!') {
+     
         char* prot = strtok(buffer, ",");
+        
         if(!prot){ 
                 Serial.println("B");
                 }
                 
          else if(prot[0] == 'p'){
-              char* command = strtok(buffer, ",");
-              char* leftMString = strtok(NULL, ",");
-              char* rightMString = strtok(NULL, "!");
+                char* leftMString = strtok(NULL, ",");
+                char* rightMString = strtok(NULL, "!");
+     
 
-              Serial.println(buffer);
-              delay(1000);
-              Serial.println(rightMString);
-              delay(1000);
+                Serial.println(leftMString);
+                delay(1000);
+                Serial.println(rightMString);
+                delay(1000);
 
-              int leftM = atoi(leftMString);
-              int rightM = atoi(rightMString);
-                
-              //md.setM1Speed(100);
-              //md.setM2Speed(100);
-              delay(1000);
+                int leftM = atoi(leftMString);
+                int rightM = atoi(rightMString);
 
-              //Serial.println("P");
+                md.setM1Speed(100);
+                md.setM2Speed(100);
+      
+
+                Serial.println("P");
          }
          else if(prot[0] == 's'){
               int fDist = ping(fPin);

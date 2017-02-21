@@ -13,7 +13,7 @@ import time
 
 
 
-ser = serial.Serial('/dev/tty.usbmodem1411',9600, timeout=3)
+ser = serial.Serial('/dev/tty.usbmodem1421',9600, timeout=3)
 time.sleep(3)
 print "serial port established (probably)"
 
@@ -59,6 +59,7 @@ def set_speed(left, right):
 while(True):
     set_speed(100,100)
     #pings = get_pings()
+    
 
 
  
