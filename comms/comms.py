@@ -80,7 +80,8 @@ def find_ball():
 	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
 	center = None
 
-        cv2.imshow('frame',blurred)
+        #cv2.imshow('frame',blurred)
+        #cv2.waitKey();
 	# only proceed if at least one contour was found
         if len(cnts) > 0:
 		# find the largest contour in the mask, then use
@@ -99,7 +100,42 @@ def find_ball():
 	        height, width, channels = frame.shape
                 print "h = " + str(height)
                 print "c = " + str(center[0]/2) 
-                return (width/2 - center[0])
+                
+
+                 
+                                
+		# only proceed if the radius meets a minimum size
+                if radius > 10:
+			# draw the circle and centroid on the frame,
+			# then update the list of tracked points
+			cv2.circle(frame, (int(x), int(y)), int(radius),
+				   (0, 255, 255), 2)
+			cv2.circle(frame, center, 5, (0, 0, 255), -1)
+
+
+
+
+                
+	# update the points queue
+	pts.appendleft(center)
+
+	# loop over the set of tracked points
+	for i in xrange(1, len(pts)):
+	    # if either of the tracked points are None, ignore
+	    # them
+	    if pts[i - 1] is None or pts[i] is None:
+		continue
+
+	        # otherwise, compute the thickness of the line and
+            # draw the connecting lines
+	    thickness = 5 #int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
+            cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
+
+	# show the frame to our screen
+	cv2.imshow("Frame", frame)
+        #        out.write(frame)
+	cv2.waitKey()
+        return (width/2 - center[0])
 
                 
 
@@ -135,7 +171,7 @@ while(True):
     
     offset = find_ball()
     print offset
-    time.sleep(1)
+    #time.sleep(1)
     #can't find any ball, spin in circles
     if(not offset):
         #set_speed(-100, 100)
