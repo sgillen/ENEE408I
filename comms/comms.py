@@ -77,12 +77,12 @@ def find_ball():
 
 	# find contours in the mask and initialize the current
 	# (x, y) center of the ball
-	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-		cv2.CHAIN_APPROX_SIMPLE)[-2]
+	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
 	center = None
 
+        cv2.imshow('frame',blurred)
 	# only proceed if at least one contour was found
-	if len(cnts) > 0:
+        if len(cnts) > 0:
 		# find the largest contour in the mask, then use
 		# it to compute the minimum enclosing circle and
 		# centroid
@@ -125,15 +125,17 @@ if not camera.isOpened():
     print "something went wrong! video not open"
 
 
-# ser = serial.Serial('/dev/tty.usbmodem1421',9600, timeout=3)
-# time.sleep(3)
-# print "serial port established (probably)"
+ser = serial.Serial(port = 'COM3',baudrate = 9600, timeout=3)
+time.sleep(3)
+print "serial port established (probably)"
 
 
 
 while(True):
     
     offset = find_ball()
+    print offset
+    time.sleep(1)
     #can't find any ball, spin in circles
     if(not offset):
         #set_speed(-100, 100)
