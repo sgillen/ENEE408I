@@ -48,9 +48,9 @@ def set_speed(left, right):
         print 'waiting for P'
         ret = ser.readline().rstrip()
         print ret
-        if(ret == 'P'):
-            print 'P received'
-            return
+        #if(ret == 'P'):
+           # print 'P received'
+           # return
         
 def find_ball():
     # Image
