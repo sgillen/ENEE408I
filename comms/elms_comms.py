@@ -125,9 +125,9 @@ if not cap.isOpened():
     print "something went wrong! video not open"
 
 
-#ser = serial.Serial(port = 'COM3',baudrate = 9600, timeout=3)
-#time.sleep(3)
-#print "serial port established (probably)"
+ser = serial.Serial(port = 'COM3',baudrate = 9600, timeout=3)
+time.sleep(3)
+print "serial port established (probably)"
 
 
 
