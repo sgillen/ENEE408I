@@ -45,9 +45,9 @@ def set_speed(left, right):
        # print ('p,' + str(left) + ',' + str(right) + '!')
         ser.write('p,' + str(left) + ',' + str(right) + '!')
         time.sleep(.05)
-        print 'waiting for P'
-        ret = ser.readline().rstrip()
-        print ret
+#        print 'waiting for P'
+ #       ret = ser.readline().rstrip()
+  #      print ret
         #if(ret == 'P'):
            # print 'P received'
            # return
