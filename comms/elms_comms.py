@@ -81,7 +81,7 @@ def find_ball():
     ).astype(np.uint8)
     # Dilate mask to remove holes from noise
     mask = dilation(mask, np.ones((10, 10)))
-    cv2.imshow('mask', mask)
+ #   cv2.imshow('mask', mask)
     # display mask here because findContours modifies it
     # Find contours in image
     _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -101,8 +101,8 @@ def find_ball():
         print (width/2 - center[0])
         return (width/2 - center[0])
         
-    cv2.imshow('image', img)
-    cv2.waitKey(1)
+    #cv2.imshow('image', img)
+    #cv2.waitKey(1)
 
 
 
@@ -135,7 +135,7 @@ while(True):
     
     offset = find_ball()
     print offset
-    time.sleep(.3)
+    #time.sleep(.3)
     #can't find any ball, spin in circles
     if(not offset):
         set_speed(-100, 100)
