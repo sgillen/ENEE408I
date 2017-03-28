@@ -135,7 +135,7 @@ while(True):
     
     offset = find_ball()
     print offset
-    #time.sleep(1)
+    time.sleep(.3)
     #can't find any ball, spin in circles
     if(not offset):
         set_speed(-100, 100)
