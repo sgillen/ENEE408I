@@ -99,6 +99,7 @@ def find_ball():
         return center[0]
         
     cv2.imshow('image', img)
+    cv2.waitKey(1)
 
 
 
