@@ -138,18 +138,18 @@ while(True):
     #time.sleep(1)
     #can't find any ball, spin in circles
     if(not offset):
-        #set_speed(-100, 100)
+        set_speed(-100, 100)
         print "couldn't fine any ball"
     elif(offset < offset_thresh and offset > -offset_thresh):
-        #set_speed(100, 100)
+        set_speed(100, 100)
         print "moving forward"
     #ball is to the left
     elif(offset < offset_thresh):
-        #set_speed(-100,100)
+        set_speed(-100,100)
         print "moving left"
     #ball is to the right
     elif(offset > offset_thresh):
-        #set_speed(100,-100)
+        set_speed(100,-100)
         print "moving right"
     #pings = get_pings()
  
