@@ -95,8 +95,11 @@ def find_ball():
 
         M = cv2.moments(contours[largestContourIdx])
         center = (int(M['m10']/M['m00']), int(M['m01']/M['m00']))
-        print center
-        return center[0]
+
+        height, width, channels = img.shape
+        
+        print (width/2 - center[0])
+        return (width/2 - center[0])
         
     cv2.imshow('image', img)
     cv2.waitKey(1)
