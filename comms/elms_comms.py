@@ -41,16 +41,15 @@ def get_pings():
 
 #relies on a global serial variable because I am a bad programmer. 
 def set_speed(left, right):
-    while(True):
        # print ('p,' + str(left) + ',' + str(right) + '!')
         ser.write('p,' + str(left) + ',' + str(right) + '!')
-        time.sleep(.05)
+      #  time.sleep(.05)
 #        print 'waiting for P'
- #       ret = ser.readline().rstrip()
-  #      print ret
-        #if(ret == 'P'):
-           # print 'P received'
-           # return
+        while(true):
+            ret = ser.readline().rstrip()
+            if(ret == 'P'):
+                print 'P received'
+                return
         
 def find_ball():
     # Image
@@ -88,8 +87,8 @@ def find_ball():
     
     if len(contours):
         largestContourIdx = np.argmax([len(c) for c in contours])
-        
-        cv2.drawContours(img, contours, largestContourIdx, (0,255,0), 3)
+
+               # cv2.drawContours(img, contours, largestContourIdx, (0,255,0), 3)
         # Display images
     
 
@@ -97,13 +96,9 @@ def find_ball():
         center = (int(M['m10']/M['m00']), int(M['m01']/M['m00']))
 
         height, width, channels = img.shape
-        
-        print (width/2 - center[0])
-        return (width/2 - center[0])
-        
-    #cv2.imshow('image', img)
-    #cv2.waitKey(1)
 
+        return (width/2 - center[0])
+    return -1
 
 
 # define the lower and upper boundaries of the needed color
@@ -114,7 +109,7 @@ colorUpper = (140, 240, 216)
 pts =  deque(maxlen=64)
 
 #define some parameters for talking to the arduino/turning or whatever. 
-offset_thresh = 70
+offset_thresh = 100
 
 # if a video path was not supplied, grab the reference
 # to the webcam
@@ -125,7 +120,7 @@ if not cap.isOpened():
     print "something went wrong! video not open"
 
 
-ser = serial.Serial(port = 'COM3',baudrate = 9600, timeout=3)
+ser = serial.Serial(port = 'COM3',baudrate = 115200, timeout=3)
 time.sleep(3)
 print "serial port established (probably)"
 
@@ -135,21 +130,22 @@ while(True):
     
     offset = find_ball()
     print offset
+    print "zzzzzzzzzzzzzz"
     #time.sleep(.3)
     #can't find any ball, spin in circles
-    if(not offset):
-        set_speed(-100, 100)
+    if(offset == -1):
+        set_speed(-80, 80)
         print "couldn't fine any ball"
     elif(offset < offset_thresh and offset > -offset_thresh):
-        set_speed(100, 100)
+        set_speed(80, 80)
         print "moving forward"
     #ball is to the left
-    elif(offset < offset_thresh):
-        set_speed(-100,100)
+    elif(offset > offset_thresh):
+        set_speed(-80,80)
         print "moving left"
     #ball is to the right
-    elif(offset > offset_thresh):
-        set_speed(100,-100)
+    elif(offset < -offset_thresh):
+        set_speed(80,-80)
         print "moving right"
     #pings = get_pings()
  
