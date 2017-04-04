@@ -1,4 +1,4 @@
-#include "DualMC33926MotorShield.h"
+  #include "DualMC33926MotorShield.h"
 #define BUFFER_SIZE 32
 
 
@@ -11,7 +11,7 @@ char buffer[BUFFER_SIZE];
 uint16_t bufferPosition;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   bufferPosition = 0;
 
 
@@ -39,19 +39,14 @@ void loop() {
          else if(prot[0] == 'p'){
                 char* leftMString = strtok(NULL, ",");
                 char* rightMString = strtok(NULL, "!");
-     
-
-                Serial.println(leftMString);
-                delay(1000);
-                Serial.println(rightMString);
-                delay(1000);
+    
 
                 int leftM = atoi(leftMString);
                 int rightM = atoi(rightMString);
 
-                md.setM1Speed(100);
-                md.setM2Speed(100);
-      
+                md.setM1Speed(leftM);
+                md.setM2Speed(rightM);
+
 
                 Serial.println("P");
          }

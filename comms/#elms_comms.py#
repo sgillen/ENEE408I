@@ -134,6 +134,9 @@ print "serial port established (probably)"
 
 count = 0
 
+left_count = 0
+
+
 while(True):
     
  #   count = count + 1
