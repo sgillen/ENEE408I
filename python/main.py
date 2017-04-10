@@ -20,7 +20,9 @@ import cv2
 
 from skimage.morphology import dilation
 
-    # Threshold hsv image within hue range
+
+
+# Threshold hsv image within hue range
 minHue = 27
 maxHue = 55
 minSaturation = 163
@@ -133,9 +135,6 @@ print "serial port established (probably)"
 
 
 count = 0
-
-left_count = 0
-
 
 while(True):
     
