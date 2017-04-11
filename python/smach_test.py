@@ -34,8 +34,6 @@ maxSaturation = 225
 minValue = 62
 maxValue = 190
 
-
-
  
 def get_pings():
     while(True):
@@ -56,21 +54,26 @@ def get_pings():
 #relies on a global serial variable because I am a bad programmer. 
 def set_speed(left, right):
        # print ('p,' + str(left) + ',' + str(right) + '!')
-        ser.write('p,' + str(left) + ',' + str(right) + '!')
+#        ser.write('p,' + str(left) + ',' + str(right) + '!')
       #  time.sleep(.05)
 #        print 'waiting for P'
         while(1):
-           ret = ser.readline().rstrip()
-           if(ret == 'P'):
-               print 'P received'
-               return
-           else:
-               print "missed a P"
+            ser.write('p,' + str(left) + ',' + str(right) + '!')
+            ret = ser.readline().rstrip()
+            if(ret == 'P'):
+                #print 'P received'
+                return
+            else:
+                pass
+               # print "missed a P"
 
                
 def find_ball():
     # Image
     re, img = cap.read()
+    
+    #cv2.imshow('mask', img)
+    #cv2.waitKey()
     # Convert image to HSV
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     # Threshold hsv image within hue range
@@ -89,7 +92,7 @@ def find_ball():
     # Dilate mask to remove holes from noise
     mask = dilation(mask, np.ones((3, 3)))
 
- #   cv2.imshow('mask', mask)
+   
     # display mask here because findContours modifies it
     # Find contours in image
     _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -97,6 +100,12 @@ def find_ball():
     if len(contours):
         largestContourIdx = np.argmax([len(c) for c in contours])
 
+        
+        area = cv2.contourArea(contours[largestContourIdx])
+
+        if area < 50:
+            return None
+        
                # cv2.drawContours(img, contours, largestContourIdx, (0,255,0), 3)
         # Display images
 
@@ -109,15 +118,16 @@ def find_ball():
     
             
         height, width, channels = img.shape
-        print "height =", height
-        print "width =", width
+       # print "height =", height
+       # print "width =", width
         return (width/2 - center[0])
     return None
 
 
-max_offset = 320 #pretty sure our image is 640x480..
-max_motor_speed = 150
-fwd_thresh = 160
+max_offset = 320.0 #pretty sure our image is 640x480..
+max_motor_speed = 150.0
+fwd_thresh = 160.0
+speed = 0
 
 class HaveBall(smach.State):
     def __init__(self):
@@ -134,16 +144,16 @@ class HaveBall(smach.State):
             #time.sleep(.3)
             #can't find any ball, spin in circles
             if(offset is None):
-                set_speed(-70, 70)
+                #set_speed(-70, 70)
                 print 'couldn\'t find any ball'
                 return 'lost_ball'
             else:
                 speed = (offset/max_offset)*max_motor_speed
                 fwd = 0
-                if(abs(offset) < fwd_threshold):
+                if(abs(offset) < fwd_thresh):
                     fwd = 50
 
-                    
+                print speed + fwd, -speed + fwd
                 set_speed(-speed + fwd ,speed + fwd)
         
 
@@ -153,9 +163,14 @@ class FindBall(smach.State):
         smach.State.__init__(self, outcomes=['found_ball'])
 
     def execute(self, userdata):
-        print 'Lost the ball!'
-        return 'found_ball' #this will need to change
-
+        set_speed(0,0)
+        while(True):
+            offset = find_ball()
+            print 'Lost the ball!'
+            
+            if offset:
+                return 'found_ball'
+        
 
 #define some parameters for talking to the arduino/turning or whatever. 
 offset_thresh = 160
@@ -170,7 +185,7 @@ if not cap.isOpened():
 
 
 ser = serial.Serial(port = 'COM3',baudrate = 115200, timeout=3)
-time.sleep(3)
+time.sleep(.5)
 print "serial port established (probably)"
 
 
@@ -181,9 +196,9 @@ sm = smach.StateMachine(outcomes=['found_ball', 'lost_ball'])
 with sm:
     # Add states to the container
     smach.StateMachine.add('HAVEBALL', HaveBall(), 
-                           transitions={'lost_ball':'lost_ball')
-    smach.StateMachine.add('FINDABLL', FindBall(), 
-                           transitions={'found_ball':'found_ball'})
+                           transitions={'lost_ball':'FINDBALL'})
+    smach.StateMachine.add('FINDBALL', FindBall(), 
+                           transitions={'found_ball':'HAVEBALL'})
     
 # Execute SMACH plan
 outcome = sm.execute()

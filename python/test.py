@@ -32,6 +32,9 @@ while True:
     maxSaturation = cv2.getTrackbarPos('maxSaturation', 'mask')
     minValue = cv2.getTrackbarPos('minValue', 'mask')
     maxValue = cv2.getTrackbarPos('maxValue', 'mask')
+
+    mask = cv2.GaussianBlur(hsv,(5,5),0)
+    
     mask = 255 * (
                     (hsv[:,:,0] > minHue) & (hsv[:,:,0] < maxHue) \
                   & (hsv[:,:,1] > minSaturation) & (hsv[:,:,1] < maxSaturation) \
@@ -39,7 +42,8 @@ while True:
                  ).astype(np.uint8)
 
     # Dilate mask to remove holes from noise
-    mask = dilation(mask, np.ones((10, 10)))
+   
+    mask = dilation(mask, np.ones((3, 3)))
     cv2.imshow('mask', mask) # display mask here because findContours modifies it
 
     # Find contours in image

@@ -23,12 +23,12 @@ from skimage.morphology import dilation
 
 
 # Threshold hsv image within hue range
-minHue = 27
-maxHue = 55
-minSaturation = 163
-maxSaturation = 225
-minValue = 62
-maxValue = 190
+minHue = 26
+maxHue = 37
+minSaturation = 97
+maxSaturation = 136
+minValue = 128
+maxValue = 231
 
 
 
@@ -68,14 +68,9 @@ def find_ball():
     re, img = cap.read()
     # Convert image to HSV
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # Threshold hsv image within hue range
-    # minHue = cv2.getTrackbarPos('minHue', 'mask')
-    # maxHue = cv2.getTrackbarPos('maxHue', 'mask')
-    # minSaturation = cv2.getTrackbarPos('minSaturation', 'mask')
-    # maxSaturation = cv2.getTrackbarPos('maxSaturation', 'mask')
-    # minValue = cv2.getTrackbarPos('minValue', 'mask')
-    # maxValue = cv2.getTrackbarPos('maxValue', 'mask')
 
+    mask = cv2.GaussianBlur(hsv,(5,5),0)
+    
     mask = 255 * (
         (hsv[:,:,0] > minHue) & (hsv[:,:,0] < maxHue) \
         & (hsv[:,:,1] > minSaturation) & (hsv[:,:,1] < maxSaturation) \
@@ -94,20 +89,23 @@ def find_ball():
 
                # cv2.drawContours(img, contours, largestContourIdx, (0,255,0), 3)
         # Display images
+        area = cv2.contourArea(contours[largestContourIdx])
 
-
+        if area < 30:
+            return None
+        
         M = cv2.moments(contours[largestContourIdx])
         try:
             center = (int(M['m10']/M['m00']), int(M['m01']/M['m00']))
         except ZeroDivisionError:
-            return -99999
-    
+            return None
+
             
         height, width, channels = img.shape
         print "height =", height
         print "width =", width
         return (width/2 - center[0])
-    return -99999
+    return None
 
 
 # define the lower and upper boundaries of the needed color
@@ -118,7 +116,7 @@ colorUpper = (140, 240, 216)
 pts =  deque(maxlen=64)
 
 #define some parameters for talking to the arduino/turning or whatever. 
-offset_thresh = 160
+offset_thresh = 100
 
 # if a video path was not supplied, grab the reference
 # to the webcam
@@ -135,36 +133,40 @@ print "serial port established (probably)"
 
 
 count = 0
+max_speed = 100
+
+
 
 while(True):
-    
- #   count = count + 1
-#    print count
- #   if (count > 200):
- #       break
-    #set_speed(0,0)
+
+    pings = get_pings()
+    print pings
+
+
+while(True):
+
+        
     offset = find_ball()
     print offset
-    print "zzzzzzzzzzzzzz"
     #time.sleep(.3)
     #can't find any ball, spin in circles
-    if(offset == -99999):
-        set_speed(-70, 70)
-        print "couldn't fine any ball"
+    if(offset is None):
+        set_speed(-max_speed, max_speed)
+        print "couldn't find any ball"
         #time.sleep(.3 )
     elif(offset < offset_thresh and offset > -offset_thresh):
-        set_speed(70, 70)
+        set_speed(max_speed, max_speed)
         print "moving forward"
         #time.sleep(.3 )
     #ball is to the left
     elif(offset > offset_thresh):
-        set_speed(-70,70)
+        set_speed(-max_speed,max_speed)
         print "moving left"
         #time.sleep(.3 )
     #ball is to the right
     elif(offset < -offset_thresh):
-        set_speed(70,-70)
+        set_speed(max_speed,-max_speed)
         print "moving right"
         #time.sleep(.3 )
-    #pings = get_pings()
+    
  
