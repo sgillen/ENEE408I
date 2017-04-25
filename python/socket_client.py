@@ -1,5 +1,6 @@
 import socket
 import sys
+import time
 # server info
 SERVER_IP = "10.104.127.127" # might need to change based on the server's ip
 PORT = 5000
@@ -14,7 +15,7 @@ MSG_END = "!"
 MSG_TEMP = "%s" + DELIM + "%s" + MSG_END
 
 # misc.
-TEAM_NO = None
+TEAM_NO = 1
 BUF_SIZE = 1024
 sock = None
 
@@ -25,11 +26,12 @@ def handshake(team_no, target_ip=SERVER_IP):
 	if sock == None:
 		sock = socket.socket()
 		TEAM_NO = str(team_no)
-		sock.settimeout(50000000000)
+		sock.settimeout(5)
 		try:
 			sock.connect((target_ip,PORT))
 			sock.send(TEAM_NO)
 			data = sock.recv(BUF_SIZE)
+                        print data
 			if data != TEAM_NO:
 				print("Error in handshake")
 				sock = None
@@ -76,3 +78,8 @@ def close():
 	sock.close()
 
 handshake(1,SERVER_IP)
+while 1:
+        send_stop()
+	data = recv()
+        print data
+        time.sleep(1)
