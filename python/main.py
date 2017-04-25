@@ -39,12 +39,10 @@ def get_pings():
         time.sleep(.05)
         print 'waiting for pings'
         ret = ser.readline().rstrip()
-        print ret
         if(ret[0] == 'S'):
             print "S received extracting pings"
-            pings = ret.split(',')
-            for i in pings:
-                print i
+            pings = ret[2:].split(',')
+            print pings
             return pings
 
     
@@ -134,18 +132,23 @@ print "serial port established (probably)"
 
 count = 0
 max_speed = 100
-
-
+turn_speed = 80
+flag = 0
 
 while(True):
-
+    flag = 0
     pings = get_pings()
-    print pings
+    for i in pings:
+        print int(i)
+        if(int(i) < 15 and int(i) != 0):
+            flag = 1
 
+    print flag
 
-while(True):
+    if (flag == 1):
+        set_speed(0,0)
+        continue
 
-        
     offset = find_ball()
     print offset
     #time.sleep(.3)
@@ -160,12 +163,12 @@ while(True):
         #time.sleep(.3 )
     #ball is to the left
     elif(offset > offset_thresh):
-        set_speed(-max_speed,max_speed)
+        set_speed(-turn_speed, turn_speed)
         print "moving left"
         #time.sleep(.3 )
     #ball is to the right
     elif(offset < -offset_thresh):
-        set_speed(max_speed,-max_speed)
+        set_speed(turn_speed,-turn_speed)
         print "moving right"
         #time.sleep(.3 )
     
