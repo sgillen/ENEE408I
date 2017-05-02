@@ -176,8 +176,8 @@ if not cap.isOpened():
     print "something went wrong! video not open"
 
 
-ser = serial.Serial(port = 'COM3',baudrate = 115200, timeout=3)
-time.sleep(3)
+#ser = serial.Serial(port = 'COM3',baudrate = 115200, timeout=3)
+#time.sleep(3)
 print "serial port established (probably)"
 
 
@@ -192,10 +192,10 @@ mythread.start()
 while(True):
     flag = 0
 
-    pings = get_pings()
-    for i in pings:
-        if(int(i) < 15 and int(i) != 0):
-            flag = 1
+    # pings = get_pings()
+    # for i in pings:
+    #     if(int(i) < 15 and int(i) != 0):
+    #         flag = 1
 
     if (flag == 1 and (mode == 1 or mode == 0 and x == 'w')):
         set_speed(0,0)

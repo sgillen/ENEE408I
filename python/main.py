@@ -106,6 +106,7 @@ def find_ball():
     return None
 
 
+
 # define the lower and upper boundaries of the needed color
 # ball in the HSV color space, then initialize the
 # list of tracked points Current color:GREEN
