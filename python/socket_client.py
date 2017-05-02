@@ -2,7 +2,8 @@ import socket
 import sys
 import time
 # server info
-SERVER_IP = "10.104.127.127" # might need to change based on the server's ip
+#SERVER_IP = "10.104.127.127" # might need to change based on the server's ip
+SERVER_IP = "127.0.0.1"
 PORT = 5000
 
 # commands

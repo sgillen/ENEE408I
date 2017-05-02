@@ -17,6 +17,7 @@ import numpy as np
 import argparse
 import imutils
 import cv2
+import threading
 
 from skimage.morphology import dilation
 
@@ -29,9 +30,59 @@ minSaturation = 97
 maxSaturation = 136
 minValue = 128
 maxValue = 231
+mode = 0 #0 for remote, 1 for ball following
+x = 'q'
+
+class _Getch:
+    """Gets a single character from standard input.  Does not echo to the
+screen."""
+    def __init__(self):
+        try:
+            self.impl = _GetchWindows()
+        except ImportError:
+            self.impl = _GetchUnix()
+
+    def __call__(self): return self.impl()
 
 
+class _GetchUnix:
+    def __init__(self):
+        import tty, sys
 
+    def __call__(self):
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+
+class _GetchWindows:
+    def __init__(self):
+        import msvcrt
+
+    def __call__(self):
+        import msvcrt
+        return msvcrt.getch()
+
+
+getch = _Getch()
+
+
+def run(self):
+    while(True):
+        x = getch()
+        if(x == 'm'):
+            mode = (mode + 1) % 2
+            set_speed(0,0)
+            x = 'q'
+                
+            
+               
  
 def get_pings():
     while(True):
@@ -137,39 +188,47 @@ flag = 0
 
 while(True):
     flag = 0
+
     pings = get_pings()
     for i in pings:
-        print int(i)
         if(int(i) < 15 and int(i) != 0):
             flag = 1
 
-    print flag
-
-    if (flag == 1):
+    if (flag == 1 and (mode == 1 or mode == 0 and x == 'w')):
         set_speed(0,0)
         continue
 
-    offset = find_ball()
-    print offset
-    #time.sleep(.3)
-    #can't find any ball, spin in circles
-    if(offset is None):
-        set_speed(-max_speed, max_speed)
-        print "couldn't find any ball"
-        #time.sleep(.3 )
-    elif(offset < offset_thresh and offset > -offset_thresh):
-        set_speed(max_speed, max_speed)
-        print "moving forward"
-        #time.sleep(.3 )
-    #ball is to the left
-    elif(offset > offset_thresh):
-        set_speed(-turn_speed, turn_speed)
-        print "moving left"
-        #time.sleep(.3 )
-    #ball is to the right
-    elif(offset < -offset_thresh):
-        set_speed(turn_speed,-turn_speed)
-        print "moving right"
-        #time.sleep(.3 )
+    if(mode == 0):
+        if(x == 'w'):
+            set_speed(max_speed, max_speed)
+            print "moving forward"
+        elif(x == 'a'):
+            set_speed(-turn_speed, turn_speed)
+            print "moving left"
+        elif(x == 'd'):
+            set_speed(turn_speed,-turn_speed)
+            print "moving right"
+        elif(x == 'q'):
+            set_speed(0,0)
+
+
+    if(mode == 1):
+        offset = find_ball()
+        print offset
+        #can't find any ball, spin in circles
+        if(offset is None):
+            set_speed(-max_speed, max_speed)
+            print "couldn't find any ball"
+        elif(offset < offset_thresh and offset > -offset_thresh):
+            set_speed(max_speed, max_speed)
+            print "moving forward"
+        #ball is to the left
+        elif(offset > offset_thresh):
+            set_speed(-turn_speed, turn_speed)
+            print "moving left"
+        #ball is to the right
+        elif(offset < -offset_thresh):
+            set_speed(turn_speed,-turn_speed)
+            print "moving right"
     
  

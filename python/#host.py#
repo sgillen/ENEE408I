@@ -17,9 +17,11 @@ s.listen(1)
 
 for i in range(0,NUM_CLIENTS):
     conn, addr = s.accept()
-    data = conn.recv(1024)
+    
     print 'Connected by', addr
     client_list.append((conn,addr))
+
+    data = conn.recv(1024)
     if not data:
         print "no data"
         
