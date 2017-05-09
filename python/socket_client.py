@@ -5,7 +5,7 @@ import time
 #SERVER_IP = "10.104.127.127" # might need to change based on the server's ip
 SERVER_IP = "127.0.0.1"
 PORT = 5000
-
+ 
 # commands
 STOP = "STOP"
 FOUND = "FOUND"
@@ -16,7 +16,7 @@ MSG_END = "!"
 MSG_TEMP = "%s" + DELIM + "%s" + MSG_END
 
 # misc.
-TEAM_NO = 1
+TEAM_NO = 0
 BUF_SIZE = 1024
 sock = None
 
@@ -27,6 +27,7 @@ def handshake(team_no, target_ip=SERVER_IP):
 	if sock == None:
 		sock = socket.socket()
 		TEAM_NO = str(team_no)
+
 		sock.settimeout(5)
 		try:
 			sock.connect((target_ip,PORT))
@@ -50,7 +51,7 @@ def handshake(team_no, target_ip=SERVER_IP):
 
 # returns a list of tuples ie [(team number, command), (team number, command)]
 # or None if no data on socket or error in parsing
-def recv():
+def recv_parse():
 	try:
 		data = sock.recv(BUF_SIZE)
 		msgs = data.strip(MSG_END).split(MSG_END) 	# split messages
@@ -62,12 +63,10 @@ def recv():
 	except socket.error:
 		print("No data found")
 		return None
-	except Error:
-		print("Malformed packet")
-		return None
 
 # call to broadcast STOP command
 def send_stop():
+        print "hello"
 	sock.send(MSG_TEMP % (TEAM_NO, STOP))
 
 # call to broadcast FOUND command
@@ -78,9 +77,13 @@ def send_found():
 def close():
 	sock.close()
 
-handshake(1,SERVER_IP)
+handshake(TEAM_NO,SERVER_IP)
+handshake(1, SERVER_IP)
 while 1:
         send_stop()
-	data = recv()
+        send_found()
+        
+        
+	data = recv_parse()
         print data
         time.sleep(1)
