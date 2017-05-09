@@ -16,7 +16,7 @@ MSG_END = "!"
 MSG_TEMP = "%s" + DELIM + "%s" + MSG_END
 
 # misc.
-TEAM_NO = 2
+TEAM_NO = 1
 BUF_SIZE = 1024
 sock = None
 
@@ -63,6 +63,7 @@ def recv_parse():
 	except socket.error:
 		print("No data found")
 		return None
+	
 
 # call to broadcast STOP command
 def send_stop():
@@ -78,11 +79,11 @@ def close():
 	sock.close()
 
 handshake(TEAM_NO,SERVER_IP)
-handshake(1, SERVER_IP)
+
 while 1:
-        send_stop()
-        #send_found()
-        
+       # send_stop()
+        send_found()
+
         
 	data = recv_parse()
         print data
