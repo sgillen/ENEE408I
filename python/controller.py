@@ -1,3 +1,6 @@
+#set up to work with an xbox one controller using pygame. you can press x to toggle the autonomous mode
+
+
 import pygame
 #definitions so far:
 

@@ -1,3 +1,5 @@
+##this code is meant to test host.py
+
 import socket
 import sys
 import time

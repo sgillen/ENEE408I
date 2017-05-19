@@ -1,3 +1,5 @@
+#this setup will talk to the server while trying find a ball. Sends and responds to stop commands
+
 #definitions so far:
 
 #computer sends "s,l_num,r_num!" is going to mean set left motor to l_num and right motor to righ_nu

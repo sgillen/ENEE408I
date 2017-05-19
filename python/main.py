@@ -1,3 +1,5 @@
+##this is simplest configuration the this script will have the robot just try and find a ball no matter what
+
 #definitions so far:
 
 #computer sends "s,l_num,r_num!" is going to mean set left motor to l_num and right motor to righ_nu

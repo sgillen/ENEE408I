@@ -1,3 +1,6 @@
+#this is meant to act as the server for the whole class, tested on Sean's computer (MacOS) not sure if it will work on windows..
+
+
 import socket
 import select
 

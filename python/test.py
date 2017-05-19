@@ -1,3 +1,5 @@
+#tuner for our ball finding algorithm
+
 import cv2
 import numpy as np
 from skimage.morphology import dilation
